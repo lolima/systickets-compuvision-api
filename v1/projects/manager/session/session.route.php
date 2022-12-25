@@ -18,7 +18,6 @@ $app->group('/v1/manager/session', function () use ($conn) {
 
                 $requestData['login'] = trim($requestData['login']);
 
-                
                 $sql = AdminSessionQueries::staffCheckFullInfo($requestData);
                 $stmt = $conn->prepare($sql);
                 $stmt->execute();
@@ -27,26 +26,13 @@ $app->group('/v1/manager/session', function () use ($conn) {
                 if (!$user) {
                     ResponseHelper::sendErrorResponse(ResponseStatus::HTTP_CONFLICT, null, ResponseTextHelper::ERROR_USER_NOT_FOUND);
                 } else {
-                    if (StaffSessionController::comparePasswords($requestData, $user)) {
-
-                        $user['photo'] = getenv('SPACES_CDN') . $user['photo'];
-                        
-                        $idstaff = $user['idstaff'];
-                        $sql = AdminSessionQueries::staffInfo($idstaff);
+                    if (StaffSessionController::comparePasswords($requestData, $user)) {                        
+                        $id = $user['id'];
+                        $sql = AdminSessionQueries::staffInfo($id);
                         $stmt = $conn->prepare($sql);
                         $stmt->execute();
                         $user = $stmt->fetch();
 
-                        $idrole = $user['idrole'];
-                        $sql = AdminRolePermissionsQueries::getRoleInfo($idrole);
-                        $stmt = $conn->prepare($sql);
-                        $stmt->execute();
-                        $user['role'] = $stmt->fetch();
-
-                        $sql = AdminRolePermissionsQueries::getRoleInfo($idrole);
-                        $stmt = $conn->prepare($sql);
-                        $stmt->execute();
-                        $user['permissions'] = $stmt->fetch();
 
                         $payload = StaffSessionController::prepareForAPIReturn($user);
                         $payload['token'] = StaffSessionController::generateToken($payload);

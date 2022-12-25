@@ -14,7 +14,7 @@ class StaffSessionController
 
     public static function checkSignUpFields($payload)
     {
-        $required = array('name', 'birthday', 'email', 'password', 'cpf', 'phone');
+        $required = array('name', 'email');
 
         return FunctionsHelper::checkFields($payload, $required);
     }
@@ -50,7 +50,7 @@ class StaffSessionController
             "exp" => $future->getTimeStamp(),
             "jti" => $jti,
             "admin" => true,
-            "idstaff" => $payload['idstaff']
+            "id" => $payload['id']
         ];
 
         $secret = getenv('SECRET');

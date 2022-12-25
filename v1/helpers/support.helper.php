@@ -413,3 +413,25 @@ abstract class BasicEnum
         return self::$constCacheArray[$calledClass];
     }
 }
+
+
+class ResponseTextHelper {
+    const ERROR_USER_NOT_FOUND = "API.ERROR.ERROR_USER_NOT_FOUND";
+
+    const ALREADY_SIGNED = "API.ERROR.ALREADY_SIGNED"; // Usuário já registrado
+    const USER_SIGNUP = "API.SUCCESS.USER_SIGNUP"; // Usuário acabou de se registrar
+    const ERROR_USER_SIGNUP = "API.ERROR.USER_SIGNUP"; // Erro ao registrar usuário
+
+    const USER_NOT_FOUND = "API.ERROR.USER_NOT_FOUND"; // Usuário não encontrado
+    const USER_SIGNIN = "API.SUCCESS.USER_SIGNIN"; // Usuário realizou login
+    const ERROR_USER_SIGNIN = "API.ERROR.USER_SIGNIN"; // Erro ao logar usuário
+
+    const ERROR_CHECK_FIELDS = "API.ERROR.CHECK_FIELDS";
+    const ERROR_EXPIRED = "API.ERROR.EXPIRED";
+
+    const ERROR_PERMISSION_DENIED = "Seu usuário não possui permissão para essa operação";
+    const CHECK_FIELDS = "API.ERROR.CHECK_FIELDS"; // Campos obrigatórios não foram preenchidos
+
+    const GENERIC_MESSAGE = "API.SUCCESS.GENERIC_MESSAGE";
+    const ERROR_GENERIC_MESSAGE = "API.ERROR.GENERIC_MESSAGE";
+}
