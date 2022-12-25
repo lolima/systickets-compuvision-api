@@ -95,4 +95,63 @@ class AdminTicketsController
             ResponseHelper::sendErrorResponse(ResponseStatus::HTTP_BAD_REQUEST, null, 'Erro ao criar ticket', $e->getMessage());
         }
     }
+
+    public static function editTicket($payload)
+    {
+        $conn = CustomDatabaseInteractor::getInstance();
+
+        if (!self::checkTicketFields($payload)) {
+            ResponseHelper::sendErrorResponse(ResponseStatus::HTTP_BAD_REQUEST, null, ResponseTextHelper::CHECK_FIELDS);
+        }
+
+        try {
+            $sql = AdminTicketsQueries::editTicket($payload);
+            $stmt = $conn->prepare($sql);
+            $stmt->execute();
+
+            $ticket = self::getTicketInfo($payload['identifier']);
+            ResponseHelper::sendSuccessResponse(ResponseStatus::HTTP_OK, $ticket, 'Tickets alterado com sucesso');
+        } catch (\Exception $e) {
+            ResponseHelper::sendErrorResponse(ResponseStatus::HTTP_BAD_REQUEST, null, 'Erro ao alterar ticket', $e->getMessage());
+        }
+    }
+
+    public static function addMessage($payload, $ticket_id, $user_id)
+    {
+        $conn = CustomDatabaseInteractor::getInstance();
+
+        try {
+            $payload['staff_id'] = $user_id;
+            $payload['ticket_id'] = $ticket_id;
+            $payload['origin'] = 'system';
+    
+            $guid = FunctionsHelper::GUIDv4();
+            $payload['id'] = $guid;
+       
+            $sql = AdminTicketsQueries::addMessage($payload);
+            $stmt = $conn->prepare($sql);
+            $stmt->execute();
+
+            $ticket = self::getTicketInfo($ticket_id);
+            ResponseHelper::sendSuccessResponse(ResponseStatus::HTTP_OK, $ticket, 'Mensagem adicionada com sucesso');
+        } catch (\Exception $e) {
+            ResponseHelper::sendErrorResponse(ResponseStatus::HTTP_BAD_REQUEST, null, 'Erro ao adicionar mensagem', $e->getMessage());
+        }
+    }
+
+    public static function removeMessage($message_id)
+    {
+        $conn = CustomDatabaseInteractor::getInstance();
+
+        try {
+            $sql = AdminTicketsQueries::removeMessage($message_id);
+            $stmt = $conn->prepare($sql);
+            $stmt->execute();
+
+            // $ticket = self::getTicketInfo($ticket_id);
+            ResponseHelper::sendSuccessResponse(ResponseStatus::HTTP_OK, null, 'Tickets removido com sucesso');
+        } catch (\Exception $e) {
+            ResponseHelper::sendErrorResponse(ResponseStatus::HTTP_BAD_REQUEST, null, 'Erro ao remover ticket', $e->getMessage());
+        }
+    }
 }

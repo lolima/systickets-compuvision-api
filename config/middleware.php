@@ -12,7 +12,7 @@ $container["JwtAuthentication"] = function ($container) {
     return new JwtAuthentication([
         "path" => ["/v1/client/", "/v1/manager/"],
         // "ignore" => ["/v1/client/session", "/v1/manager/session", "/v1/manager/public"],
-        "passthrough" => ["/v1/client/session", "/v1/manager/session", "/v1/manager/public"],
+        "passthrough" => ["/v1/manager/session", "/v1/public"],
         "secret" => $container['secret'],
         "secure" => false,
         "error" => function ($request, $response, $arguments) {
