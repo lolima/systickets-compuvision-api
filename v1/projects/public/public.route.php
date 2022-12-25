@@ -10,21 +10,28 @@ use Psr\Http\Message\ServerRequestInterface as ServerRequestInterface;
 
 $app->group('/v1/public', function () use ($conn) {
 
-    $this->post('/lead', function (ServerRequestInterface $request, ResponseInterface $response, $arguments) use ($conn) {
-        $requestBody = $request->getParsedBody();
+    $this->get('/ticket/single/{id}', function (ServerRequestInterface $request, ResponseInterface $response, $arguments) use ($conn) {
+        // $requestData = $request->getParsedBody();
+        // $getToken = HeaderHelper::getToken($request->getHeader('HTTP_AUTHORIZATION'));
+        $headers = $request->getHeaders();
+        $idticket = $arguments['id'];
 
-        if (PublicController::checkTicketFields($requestBody)) {
-            try {
+        try {
+            AdminTicketsController::singleTicket($idticket);
+        } catch (\Exception $e) {
+            ResponseHelper::sendErrorResponse(ResponseStatus::HTTP_BAD_REQUEST, null, ResponseTextHelper::ERROR_GENERIC_MESSAGE, $e->getMessage());
+        }
+    });
 
-                $generatedId = FunctionsHelper::GUIDv4();
-               
+    $this->post('/ticket/new', function (ServerRequestInterface $request, ResponseInterface $response, $arguments) use ($conn) {
+        $requestData = $request->getParsedBody();
+        // $getToken = HeaderHelper::getToken($request->getHeader('HTTP_AUTHORIZATION'));
+        $headers = $request->getHeaders();
 
-                ResponseHelper::sendSuccessResponse(ResponseStatus::HTTP_OK, $generatedId, 'Sucesso');
-            } catch (\Exception $e) {
-                ResponseHelper::sendErrorResponse(ResponseStatus::HTTP_BAD_REQUEST, $requestBody,'Erro', $e->getMessage());
-            }
-        } else {
-            ResponseHelper::sendErrorResponse(ResponseStatus::HTTP_BAD_REQUEST, null, 'Verifique se os campos foram preenchidos corretamente');
+        try {
+            AdminTicketsController::newTicket($requestData);
+        } catch (\Exception $e) {
+            ResponseHelper::sendErrorResponse(ResponseStatus::HTTP_BAD_REQUEST, null, ResponseTextHelper::ERROR_GENERIC_MESSAGE, $e->getMessage());
         }
     });
 
