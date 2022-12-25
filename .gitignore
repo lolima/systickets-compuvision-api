@@ -1,0 +1,5 @@
+/bin
+/vendor
+temp.txt
+.env
+.DS_Store
