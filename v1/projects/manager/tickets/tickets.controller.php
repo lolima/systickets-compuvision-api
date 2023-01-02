@@ -90,6 +90,8 @@ class AdminTicketsController
             $stmt->execute();
 
             $ticket = self::getTicketInfo($identifier);
+
+            $ticket['mail'] = MailHelper::sendTicketEmail($ticket['client_name'], $ticket['identifier'],$ticket['client_email']);
             ResponseHelper::sendSuccessResponse(ResponseStatus::HTTP_OK, $ticket, 'Tickets criado com sucesso');
         } catch (\Exception $e) {
             ResponseHelper::sendErrorResponse(ResponseStatus::HTTP_BAD_REQUEST, null, 'Erro ao criar ticket', $e->getMessage());

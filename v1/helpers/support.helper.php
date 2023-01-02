@@ -280,7 +280,7 @@ class Correios
 class MailHelper
 {
 
-    public static function sendTicketEmail($client_name)
+    public static function sendTicketEmail($client_name, $ticket_code, $client_email)
     {
         $ch = curl_init();
 
@@ -288,20 +288,21 @@ class MailHelper
             "Messages": [
                 {
                     "From": {
-                        "Email": "no-reply@compuvision.com",
-                        "Name": "compuvision"
+                        "Email": "compuvision@systickets.carioca.in",
+                        "Name": "Compuvision - Chamados"
                     },
                     "To": [
                         {
-                            "Email": "contato@compuvision.com",
-                            "Name": "Administrativo - compuvision"
+                            "Email": "' . $client_email . '",
+                            "Name": "' . $client_name . '"
                         }
                     ],
-                    "TemplateID": 4126528,
+                    "TemplateID": 4468276,
                     "TemplateLanguage": true,
-                    "Subject": "compuvision :: Novo chamado",
+                    "Subject": "Compuvision :: Novo chamado",
                     "Variables": {
-                        "client_name": "' . $client_name . '"
+                        "client_name": "' . $client_name . '",
+                        "ticket_code": "' . $ticket_code . '"
                     }
                 }
             ]
@@ -310,7 +311,7 @@ class MailHelper
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_POST, 1);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $content);
-        curl_setopt($ch, CURLOPT_USERPWD,  '95755fa196823333848aaa88e7b50576:0560f3180e568ebb4069c90691b8b496');
+        curl_setopt($ch, CURLOPT_USERPWD,  '03327fa338ebb56389e99e2996c61610:10ef1e8fe5785f94f0b6e337109985c8');
 
         $headers = array();
         $headers[] = 'Content-Type: application/json';
