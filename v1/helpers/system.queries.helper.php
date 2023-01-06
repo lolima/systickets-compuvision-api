@@ -24,6 +24,12 @@ class AdminTicketsQueries {
         return FunctionsHelper::prepareQuery($sql);
     }
 
+    public static function userTickets($user_email)
+    {
+        $sql = "SELECT * FROM tickets WHERE client_email = '$user_email' ORDER BY created_at";
+        return FunctionsHelper::prepareQuery($sql);
+    }
+
     public static function singleTicket($id)
     {
         $sql = "SELECT * FROM tickets WHERE identifier = '$id' OR id = '$id'";

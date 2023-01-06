@@ -7,7 +7,7 @@ class AdminTicketsController
 {
     public static function checkTicketFields($payload)
     {
-        $required = array("client_name","client_phone","client_email","description");
+        $required = array("client_name", "client_phone", "client_email", "description");
 
         return FunctionsHelper::checkFields($payload, $required);
     }
@@ -31,9 +31,9 @@ class AdminTicketsController
                 $ticket['messages'] = $stmt->fetchAll();
             }
 
-            ResponseHelper::sendSuccessResponse(ResponseStatus::HTTP_OK, $tickets, 'Tickets listados com sucesso');
+            ResponseHelper::sendSuccessResponse(ResponseStatus::HTTP_OK, $tickets, 'Chamados listados com sucesso');
         } catch (\Exception $e) {
-            ResponseHelper::sendErrorResponse(ResponseStatus::HTTP_BAD_REQUEST, null, 'Erro ao listar tickets', $e->getMessage());
+            ResponseHelper::sendErrorResponse(ResponseStatus::HTTP_BAD_REQUEST, null, 'Erro ao listar chamados', $e->getMessage());
         }
     }
 
@@ -44,9 +44,30 @@ class AdminTicketsController
             $ticket = self::getTicketInfo($id);
 
 
-            ResponseHelper::sendSuccessResponse(ResponseStatus::HTTP_OK, $ticket, 'Ticket listado com sucesso');
+            ResponseHelper::sendSuccessResponse(ResponseStatus::HTTP_OK, $ticket, 'Chamado listado com sucesso');
         } catch (\Exception $e) {
-            ResponseHelper::sendErrorResponse(ResponseStatus::HTTP_BAD_REQUEST, null, 'Erro ao listar ticket', $e->getMessage());
+            ResponseHelper::sendErrorResponse(ResponseStatus::HTTP_BAD_REQUEST, null, 'Erro ao listar chamado', $e->getMessage());
+        }
+    }
+
+    public static function allUserTickets($user_email)
+    {
+        $conn = CustomDatabaseInteractor::getInstance();
+
+        try {
+
+            $sql = AdminTicketsQueries::userTickets($user_email);
+            $stmt = $conn->prepare($sql);
+            $stmt->execute();
+            $tickets = $stmt->fetchAll();
+
+            foreach ($tickets as &$ticket) {
+                $ticket = self::getTicketInfo($ticket['id']);
+            }
+
+            ResponseHelper::sendSuccessResponse(ResponseStatus::HTTP_OK, $tickets, 'Chamados listados com sucesso');
+        } catch (\Exception $e) {
+            ResponseHelper::sendErrorResponse(ResponseStatus::HTTP_BAD_REQUEST, null, 'Erro ao listar chamados', $e->getMessage());
         }
     }
 
@@ -91,10 +112,10 @@ class AdminTicketsController
 
             $ticket = self::getTicketInfo($identifier);
 
-            $ticket['mail'] = MailHelper::sendTicketEmail($ticket['client_name'], $ticket['identifier'],$ticket['client_email']);
-            ResponseHelper::sendSuccessResponse(ResponseStatus::HTTP_OK, $ticket, 'Tickets criado com sucesso');
+            $ticket['mail'] = MailHelper::sendTicketEmail($ticket['client_name'], $ticket['identifier'], $ticket['client_email']);
+            ResponseHelper::sendSuccessResponse(ResponseStatus::HTTP_OK, $ticket, 'Chamado criado com sucesso');
         } catch (\Exception $e) {
-            ResponseHelper::sendErrorResponse(ResponseStatus::HTTP_BAD_REQUEST, null, 'Erro ao criar ticket', $e->getMessage());
+            ResponseHelper::sendErrorResponse(ResponseStatus::HTTP_BAD_REQUEST, null, 'Erro ao criar chamado', $e->getMessage());
         }
     }
 
@@ -112,9 +133,9 @@ class AdminTicketsController
             $stmt->execute();
 
             $ticket = self::getTicketInfo($payload['identifier']);
-            ResponseHelper::sendSuccessResponse(ResponseStatus::HTTP_OK, $ticket, 'Tickets alterado com sucesso');
+            ResponseHelper::sendSuccessResponse(ResponseStatus::HTTP_OK, $ticket, 'Chamado alterado com sucesso');
         } catch (\Exception $e) {
-            ResponseHelper::sendErrorResponse(ResponseStatus::HTTP_BAD_REQUEST, null, 'Erro ao alterar ticket', $e->getMessage());
+            ResponseHelper::sendErrorResponse(ResponseStatus::HTTP_BAD_REQUEST, null, 'Erro ao alterar chamado', $e->getMessage());
         }
     }
 
@@ -126,10 +147,10 @@ class AdminTicketsController
             $payload['staff_id'] = $user_id;
             $payload['ticket_id'] = $ticket_id;
             $payload['origin'] = 'system';
-    
+
             $guid = FunctionsHelper::GUIDv4();
             $payload['id'] = $guid;
-       
+
             $sql = AdminTicketsQueries::addMessage($payload);
             $stmt = $conn->prepare($sql);
             $stmt->execute();
@@ -151,9 +172,9 @@ class AdminTicketsController
             $stmt->execute();
 
             // $ticket = self::getTicketInfo($ticket_id);
-            ResponseHelper::sendSuccessResponse(ResponseStatus::HTTP_OK, null, 'Tickets removido com sucesso');
+            ResponseHelper::sendSuccessResponse(ResponseStatus::HTTP_OK, null, 'Chamado removido com sucesso');
         } catch (\Exception $e) {
-            ResponseHelper::sendErrorResponse(ResponseStatus::HTTP_BAD_REQUEST, null, 'Erro ao remover ticket', $e->getMessage());
+            ResponseHelper::sendErrorResponse(ResponseStatus::HTTP_BAD_REQUEST, null, 'Erro ao remover chamado', $e->getMessage());
         }
     }
 }
